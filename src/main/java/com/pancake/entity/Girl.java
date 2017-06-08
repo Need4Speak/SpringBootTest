@@ -45,4 +45,13 @@ public class Girl {
     public void setSize(int size) {
         this.size = size;
     }
+
+    @Override
+    public String toString() {
+        return "Girl{" +
+                "id=" + id +
+                ", age='" + age + '\'' +
+                ", size=" + size +
+                '}';
+    }
 }

@@ -2,6 +2,10 @@ package com.pancake.controller;
 
 import com.pancake.Repository.GirlRepository;
 import com.pancake.entity.Girl;
+import com.pancake.entity.Result;
+import com.pancake.service.GirlService;
+import com.pancake.util.ResultUtil;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,24 +22,30 @@ public class GirlController {
     @Autowired
     private GirlRepository girlRepository;
 
+    @Autowired
+    private GirlService girlService;
+
     @GetMapping(value = "/girlList")
     public List<Girl> girlList() {
         return girlRepository.findAll();
     }
 
     @PostMapping(value = "/girlList")
-    Girl girlAdd(@Valid Girl girl, BindingResult bindingResult) {
+    public Result girlAdd(@Valid Girl girl, BindingResult bindingResult) {
+        Result result = new Result();
         if (bindingResult.hasErrors()){
-            System.out.println(bindingResult.getFieldError().getDefaultMessage());
-            return null;
+            return ResultUtil.error(1, bindingResult.getFieldError().getDefaultMessage());
         }
+
         girl.setAge(girl.getAge());
         girl.setSize(girl.getSize());
-        return girlRepository.save(girl);
+
+        return ResultUtil.success(girlRepository.save(girl));
     }
 
     @GetMapping(value = "/girlList/{id}")
     public Girl findById(@PathVariable Integer id){
+
         return girlRepository.findOne(id);
     }
 
@@ -51,5 +61,11 @@ public class GirlController {
     @DeleteMapping(value = "/girlList/{id}")
     public void deleteById(@PathVariable Integer id){
         girlRepository.delete(id);
+    }
+
+    @GetMapping(value = "/girlList/getAge/{id}")
+    public void getAge(@PathVariable Integer id) throws Exception {
+
+        girlService.getAge(id);
     }
 }
